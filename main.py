@@ -1,4 +1,6 @@
 import numpy as np
+import copy
+import math
 
 
 def print_float_matrix(m):
@@ -89,14 +91,54 @@ def task_2(A):
     print("_QR = _Q * _R\n_QR == QR\n", QR == _QR)
 
 
+def accuracy_check(x_prev, x):
+    sum_up = 0
+    sum_low = 0
+    for k in range(0, len(x_prev)):
+        sum_up += (x[k] - x_prev[k]) ** 2
+        sum_low += (x[k]) ** 2
+
+    return math.sqrt(sum_up / sum_low) < 0.001
+
+
 def task_3():
     print("===================================\nTASK 3\n")
 
     a = np.array([[3.1, 2.8, 1.9],
                   [1.9, 3.1, 2.1],
                   [7.5, 3.8, 4.8]], float)
+    print("A =")
+    print_float_matrix(a)
 
     b = np.array([[0.2], [2.1], [5.6]], float)
+    print("B =")
+    print_float_matrix(b)
+
+    x = np.array([[0], [0], [0]], float)
+
+    count = 0
+    while (count < 1000):
+        x_prev = x.copy()
+
+        for k in range(0, 3):
+            S = 0
+            for j in range(0, 3):
+                if (j != k):
+                    S = S + a[k][j] * x[j]
+            x[k] = b[k] / a[k][k] - S / a[k][k]
+
+        if accuracy_check(x_prev, x):
+            break
+
+        count += 1
+
+    print("Total iteration count: ", count)
+    x = x.copy()
+    print("X =")
+    print_float_matrix(x)
+
+    print("np.linalg.solve(a, b):")
+    print_float_matrix(np.linalg.solve(a, b))
 
 
 task_2(task_1())
