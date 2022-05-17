@@ -132,12 +132,12 @@ def task_3():
 
         count += 1
 
-    print("Total iteration count: ", count)
+    print("Total iteration count =", count)
     x = x.copy()
     print("X =")
     print_float_matrix(x)
 
-    print("np.linalg.solve(a, b):")
+    print("np.linalg.solve(a, b) =")
     print_float_matrix(np.linalg.solve(a, b))
 
 
