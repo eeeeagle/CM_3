@@ -15,7 +15,7 @@ def print_float_matrix(m):
 def task_1():
     print("===================================\nTASK 1\n")
 
-    m = n = 8
+    m = n = 5
     A = np.random.randint(5, 11, (m, n))
     print("A =")
     print(A, "\n")
