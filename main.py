@@ -1,5 +1,4 @@
 import numpy as np
-import math
 
 
 def print_float_matrix(m):
@@ -7,7 +6,7 @@ def print_float_matrix(m):
     for i in range(a):
         print("[", end=' ')
         for j in range(b):
-            print("%7.3f" % m[i][j], end=' ')
+            print("%8.4f" % m[i][j], end=' ')
         print("]")
     print(" ")
 
@@ -15,8 +14,8 @@ def print_float_matrix(m):
 def task_1():
     print("===================================\nTASK 1\n")
 
-    m = n = 5
-    A = np.random.randint(5, 11, (m, n))
+    m = n = 7
+    A = np.random.randint(2, 9, (m, n))
     print("A =")
     print(A, "\n")
 
@@ -36,20 +35,16 @@ def task_1():
     print("U =")
     print_float_matrix(U)
 
-    print("det A = det L * det U\n"
-          "det L =", round(np.linalg.det(L)), "==> det A = det U\n"
-          "det U is equal product of all elements of the diagonal\n")
+    print("det L =", round(np.linalg.det(L)))
 
     diag_prod = round(U.diagonal().prod())
     print("det U =", diag_prod)
-    print("det A == det U :", round(np.linalg.det(A)) == diag_prod, "\n")
+    print("det A:", round(np.linalg.det(A)) == diag_prod, "\n")
     return A
 
 
 def task_2(A):
     print("===================================\nTASK 2\n")
-
-    print("Gram–Schmidt process:\n")
     m, n = A.shape
     Q = np.zeros((m, n))
     R = np.zeros((n, n))
@@ -74,12 +69,12 @@ def task_2(A):
 
     QR = np.dot(Q, R)
     QR = QR.round()
-    print("A == QR\n", A == QR)
+    print("QR =")
+    print_float_matrix(QR)
 
-    print("\nnp.linalg.qr(A):\n")
-    Q, R = np.linalg.qr(A)
+    _Q, _R = np.linalg.qr(A)
 
-    print("_Q =")
+    print("np.linalg.qr(A):\n_Q =")
     print_float_matrix(Q)
 
     print("_R =")
@@ -87,57 +82,59 @@ def task_2(A):
 
     _QR = np.dot(Q, R)
     _QR = _QR.round()
-    print("_QR = _Q * _R\n_QR == QR\n", QR == _QR)
+    print("_Q * _R = _QR\n_QR =")
+    print_float_matrix(_QR)
 
-
-def accuracy_check(x_prev, x):
-    sum_up = 0
-    sum_low = 0
-    for k in range(0, len(x_prev)):
-        sum_up += (x[k] - x_prev[k]) ** 2
-        sum_low += (x[k]) ** 2
-
-    return math.sqrt(sum_up / sum_low) < 0.001
+    print("_QR = QR\n", _QR == QR, "\n")
 
 
 def task_3():
     print("===================================\nTASK 3\n")
 
-    a = np.array([[3.1, 2.8, 1.9],
-                  [1.9, 3.1, 2.1],
-                  [7.5, 3.8, 4.8]], float)
+    a = np.array([[3.6, 1.8, -4.7], [2.7, -3.6, 1.9], [1.5, 4.5, 3.3]], float)
     print("A =")
     print_float_matrix(a)
 
-    b = np.array([[0.2], [2.1], [5.6]], float)
+    b = np.array([[3.8], [0.4], [-1.6]], float)
     print("B =")
     print_float_matrix(b)
 
-    x = np.array([[0], [0], [0]], float)
+    a[0] = a[0] + a[1]
+    b[0] = b[0] + b[1]
 
-    count = 0
-    while (count < 1000):
-        x_prev = x.copy()
+    c = np.zeros((3, 3), float)
+    f = np.zeros(3, float)
 
-        for k in range(0, 3):
-            S = 0
-            for j in range(0, 3):
-                if (j != k):
-                    S = S + a[k][j] * x[j]
-            x[k] = b[k] / a[k][k] - S / a[k][k]
+    for i in range(0, 3):
+        for j in range(0, 3):
+            if i == j:
+                c[i, j] = 0
+            else:
+                c[i, j] = -a[i, j] / a[i, i]
 
-        if accuracy_check(x_prev, x):
-            break
+    print("C =")
+    print_float_matrix(c)
 
-        count += 1
+    for i in range(0, 3):
+        f[i] = b[i] / a[i, i]
 
-    print("Total iteration count =", count)
-    x = x.copy()
-    print("X =")
-    print_float_matrix(x)
+    F = np.array([[f[0]], [f[1]], [f[2]]])
+    print("F =")
+    print_float_matrix(F)
 
-    print("np.linalg.solve(a, b) =")
-    print_float_matrix(np.linalg.solve(a, b))
+    x = np.zeros(3, float)
+    x1 = f
+
+    eps = 0.001
+    while (abs(x1[0] - x[0]) > eps) | (abs(x1[1] - x[1]) > eps) | (abs(x1[2] - x[2]) > eps):
+        tmp = np.dot(c, x1) + f
+        x = x1
+        x1 = tmp
+
+    X = np.array([[x1[0]], [x1[1]], [x1[2]]])
+    print("X =\n", X, "\n")
+
+    print("np.linalg.solve(A, B)) =\n", np.linalg.solve(a, b))
 
 
 task_2(task_1())
